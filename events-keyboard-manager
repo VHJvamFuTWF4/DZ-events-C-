@@ -1,0 +1,74 @@
+using System.Windows.Input;
+using System;
+using System.Reflection.Metadata;
+using static KeyboardManager;
+using System.IO;
+
+class myEventArg: EventArgs
+{
+    int number;
+}
+class KeyboardManager
+{
+    public delegate void Key_pressed_Subcriber(char chr);
+    public event Key_pressed_Subcriber? DigitKeyPressed;
+    public event Key_pressed_Subcriber? LogKeyPressed;
+    public event Key_pressed_Subcriber? ThreeKeyPressed;
+    public event Key_pressed_Subcriber? FiveKeyPressed;
+
+    static void Main()
+    {
+        while (true)
+        {
+            KeyboardManager keyboardManager = new KeyboardManager();
+
+            keyboardManager.ThreeKeyPressed += DisplayMessage_Three;
+            keyboardManager.FiveKeyPressed += DisplayMessage_Five;
+            keyboardManager.DigitKeyPressed += DisplayMessage_Digit;
+            keyboardManager.LogKeyPressed += LogWrite;
+
+            var key_pressed = Console.ReadKey();
+            Console.WriteLine("\n");
+            char key_chr = key_pressed.KeyChar;
+
+            if (key_chr == '3')
+            {
+                keyboardManager.ThreeKeyPressed(key_chr);
+            }
+
+            if (key_chr == '5')
+            {
+                keyboardManager.FiveKeyPressed(key_chr);
+            }
+
+            if (key_chr >= '0' && key_chr <= '9')
+            {
+                keyboardManager.DigitKeyPressed(key_chr);
+            }
+
+            keyboardManager.LogKeyPressed(key_chr);
+
+            void DisplayMessage_Three(char chr)
+            {
+                Console.WriteLine("Three subsciber:" + chr + "\n");
+            }
+            void DisplayMessage_Five(char chr)
+            {
+                Console.WriteLine("Five subsciber:" + chr + "\n");
+            }
+            void DisplayMessage_Digit(char chr)
+            {
+                Console.WriteLine("AnyDigit subsciber:" + chr + "\n");
+            }
+            void LogWrite(char chr)
+            {
+                string path = "C:\\Users\\User\\Desktop\\log.txt";
+                StreamWriter SW = new StreamWriter(path, true, System.Text.Encoding.Default);
+                string text = "Key " + chr + " was pressed";
+                SW.WriteLine(text);
+                SW.Close();
+            }
+        }
+    }
+   
+}
